@@ -1,0 +1,21 @@
+# Serverpod Development Configuration
+apiServer:
+  port: 8080
+  publicHost: localhost
+  publicPort: 8080
+
+insightsServer:
+  port: 8081
+  publicHost: localhost
+  publicPort: 8081
+
+webServer:
+  port: 8082
+  publicHost: localhost
+  publicPort: 8082
+
+database:
+  host: localhost
+  port: 5432
+  name: campuspulse
+  user: postgres
