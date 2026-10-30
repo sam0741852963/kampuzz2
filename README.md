@@ -119,15 +119,16 @@ campuspulse1/
 ### Prerequisites
 - Flutter SDK (>=3.0.0)
 - Dart SDK (>=3.0.0)
-- Docker (for local PostgreSQL) or Serverpod Cloud credentials
+- Serverpod Cloud credentials for deployment (Docker is not required for local development)
 
 ### A. Run Serverpod Backend
 ```powershell
 cd campuspulse_server
 dart pub get
-# If running with local PostgreSQL:
-docker compose up -d
-serverpod run
+# Apply the committed migration to the embedded development database:
+serverpod run migrate
+# Start the backend:
+serverpod run start
 ```
 
 ### B. Run Server & Logic Tests

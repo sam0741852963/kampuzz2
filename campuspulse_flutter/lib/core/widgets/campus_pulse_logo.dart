@@ -79,7 +79,7 @@ class CampusPulseLogo extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'CampusPulse',
+                'Kampuzz',
                 style: TextStyle(
                   fontSize: size * 0.46,
                   fontWeight: FontWeight.w900,
@@ -209,3 +209,6 @@ class _PulseCrestPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
+/// Brand name alias
+typedef KampuzzLogo = CampusPulseLogo;

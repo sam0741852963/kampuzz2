@@ -101,7 +101,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out of CampusPulse?'),
+        content: const Text('Are you sure you want to sign out of Kampuzz?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),

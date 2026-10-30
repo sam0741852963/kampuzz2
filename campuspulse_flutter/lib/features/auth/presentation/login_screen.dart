@@ -21,7 +21,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController(text: 'aarav.sharma@iitd.ac.in');
-  final _passwordController = TextEditingController(text: 'CampusPulse@2026');
+  final _passwordController = TextEditingController(text: 'Kampuzz@2026');
   bool _obscurePassword = true;
   bool _rememberMe = true;
 
@@ -85,7 +85,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 20),
                     const Center(
                       child: Text(
-                        'CampusPulse',
+                        'Kampuzz',
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w900,
@@ -325,7 +325,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         const Text(
-                          'New to CampusPulse? ',
+                          'New to Kampuzz? ',
                           style: TextStyle(color: AppColors.textSecondaryLight, fontSize: 14),
                         ),
                         GestureDetector(

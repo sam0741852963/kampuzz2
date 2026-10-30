@@ -3,14 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 
-/// Root application widget for CampusPulse.
+/// Root application widget for Kampuzz.
 class CampusPulseApp extends ConsumerWidget {
   const CampusPulseApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
-      title: 'CampusPulse',
+      title: 'Kampuzz',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
@@ -19,3 +19,6 @@ class CampusPulseApp extends ConsumerWidget {
     );
   }
 }
+
+/// Brand name alias
+typedef KampuzzApp = CampusPulseApp;

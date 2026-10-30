@@ -18,5 +18,6 @@ dev_dependencies:
 serverpod:
   scripts:
     start: dart lib/server.dart
+    migrate: dart lib/server.dart --apply-migrations
     test: dart test
     build: dart compile exe lib/server.dart

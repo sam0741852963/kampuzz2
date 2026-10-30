@@ -64,7 +64,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Profile setup complete! Welcome to CampusPulse.'),
+        content: Text('Profile setup complete! Welcome to Kampuzz.'),
         backgroundColor: AppColors.attendanceSafe,
       ),
     );

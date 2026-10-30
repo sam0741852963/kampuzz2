@@ -34,3 +34,5 @@ migrate_working_dir/
 *.db
 *.sqlite
 config/passwords.yaml
+.serverpod/
+**/pgdata/

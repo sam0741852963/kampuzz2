@@ -20,7 +20,7 @@ void main() {
     expect(find.byType(CampusPulseLogo), findsOneWidget);
 
     // Verify Brand Title & Tagline
-    expect(find.text('CampusPulse'), findsOneWidget);
+    expect(find.text('Kampuzz'), findsOneWidget);
     expect(find.text('QUICK DEMO SIGN-IN (1-TAP)'), findsOneWidget);
 
     // Verify Demo Action Chips

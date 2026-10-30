@@ -78,7 +78,7 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                     if (screenWidth >= 1100) ...[
                       const SizedBox(width: 10),
                       const Text(
-                        'CampusPulse',
+                        'Kampuzz',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w900,

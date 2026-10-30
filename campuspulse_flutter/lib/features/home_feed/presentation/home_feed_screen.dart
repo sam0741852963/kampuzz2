@@ -110,7 +110,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
           children: [
             CampusPulseLogo(size: 28, showGlow: false),
             SizedBox(width: 10),
-            Text('CampusPulse', style: TextStyle(fontWeight: FontWeight.w800)),
+            Text('Kampuzz', style: TextStyle(fontWeight: FontWeight.w800)),
           ],
         ),
         actions: [
