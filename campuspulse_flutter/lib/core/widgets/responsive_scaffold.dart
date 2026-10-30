@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../constants/app_colors.dart';
+import 'campus_pulse_logo.dart';
+import 'auth_user_menu.dart';
 
 /// Responsive scaffold providing:
 /// - Desktop/Laptop adaptive NavigationRail sidebar on wide screens (>= 800px)
@@ -72,18 +74,7 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [AppColors.primary, AppColors.secondary],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(Icons.flash_on_rounded, color: Colors.white, size: 22),
-                    ),
+                    const CampusPulseLogo(size: 34, showGlow: false),
                     if (screenWidth >= 1100) ...[
                       const SizedBox(width: 10),
                       const Text(
@@ -123,6 +114,10 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                           icon: const Icon(Icons.calculate_rounded, color: AppColors.attendanceSafe),
                           onPressed: () => context.push('/bunk-meter'),
                         ),
+                        const SizedBox(height: 12),
+                        const Divider(indent: 12, endIndent: 12),
+                        const SizedBox(height: 4),
+                        const AuthUserAvatarButton(),
                       ],
                     ),
                   ),

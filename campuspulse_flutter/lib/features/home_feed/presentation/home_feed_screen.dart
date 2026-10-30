@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/widgets/campus_pulse_logo.dart';
+import '../../../core/widgets/auth_user_menu.dart';
 
 /// Section 5.4: Event Feed (Instagram-style)
 /// - Vertically swipeable full-screen feed (PageView) of upcoming events
@@ -104,18 +106,11 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
+        title: const Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.flash_on_rounded, color: Colors.white, size: 20),
-            ),
-            const SizedBox(width: 10),
-            const Text('CampusPulse', style: TextStyle(fontWeight: FontWeight.w800)),
+            CampusPulseLogo(size: 28, showGlow: false),
+            SizedBox(width: 10),
+            Text('CampusPulse', style: TextStyle(fontWeight: FontWeight.w800)),
           ],
         ),
         actions: [
@@ -129,6 +124,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
             icon: const Icon(Icons.calendar_today_outlined, color: AppColors.primary),
             onPressed: () => context.push('/timetable'),
           ),
+          const AuthUserAvatarButton(),
         ],
       ),
       body: PageView.builder(

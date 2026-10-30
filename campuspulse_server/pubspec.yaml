@@ -14,3 +14,9 @@ dependencies:
 dev_dependencies:
   test: ^1.25.2
   serverpod_test: 4.0.4
+
+serverpod:
+  scripts:
+    start: dart lib/server.dart
+    test: dart test
+    build: dart compile exe lib/server.dart

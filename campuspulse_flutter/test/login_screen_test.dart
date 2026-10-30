@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:campuspulse_flutter/features/auth/presentation/login_screen.dart';
+import 'package:campuspulse_flutter/core/widgets/campus_pulse_logo.dart';
 import 'package:campuspulse_flutter/core/theme/app_theme.dart';
 
 void main() {
@@ -14,6 +15,9 @@ void main() {
         ),
       ),
     );
+
+    // Verify Custom Unique Brand Logo
+    expect(find.byType(CampusPulseLogo), findsOneWidget);
 
     // Verify Brand Title & Tagline
     expect(find.text('CampusPulse'), findsOneWidget);
