@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../sam_ai/presentation/sam_copilot_modal.dart';
 
 /// Section 5.3: Timetable and Academic Calendar
 class TimetableScreen extends StatefulWidget {
@@ -105,6 +106,13 @@ class _TimetableScreenState extends State<TimetableScreen> with SingleTickerProv
     return Scaffold(
       appBar: AppBar(
         title: const Text('Timetable & Calendar', style: TextStyle(fontWeight: FontWeight.w800)),
+        actions: [
+          IconButton(
+            tooltip: 'Ask Sam AI about Schedule',
+            icon: const Icon(Icons.auto_awesome, color: Color(0xFF6366F1)),
+            onPressed: () => showSamCopilotModal(context),
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           labelColor: AppColors.primary,
@@ -138,6 +146,46 @@ class _TimetableScreenState extends State<TimetableScreen> with SingleTickerProv
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        // Sam AI Copilot Timetable Banner
+        Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                const Color(0xFF6366F1).withValues(alpha: 0.12),
+                const Color(0xFF8B5CF6).withValues(alpha: 0.08),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFF6366F1).withValues(alpha: 0.25)),
+          ),
+          child: Row(
+            children: [
+              const CircleAvatar(
+                radius: 18,
+                backgroundColor: Color(0xFF6366F1),
+                child: Icon(Icons.auto_awesome, color: Colors.white, size: 18),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Sam AI Timetable Buddy', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Color(0xFF6366F1))),
+                    Text('Next: DAA Lab in CS Lab 3 at 11:30 AM', style: TextStyle(fontSize: 12)),
+                  ],
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () => showSamCopilotModal(context),
+                icon: const Icon(Icons.chat_bubble_outline_rounded, size: 14),
+                label: const Text('Ask Sam'),
+              ),
+            ],
+          ),
+        ),
+
         // Section Header
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

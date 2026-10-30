@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/bunk_math.dart';
+import '../../sam_ai/presentation/sam_copilot_modal.dart';
 
 /// Section 5.2: Bunk-Meter (Attendance Predictor)
 class BunkMeterScreen extends StatefulWidget {
@@ -102,6 +103,11 @@ class _BunkMeterScreenState extends State<BunkMeterScreen> {
       appBar: AppBar(
         title: const Text('Bunk-Meter', style: TextStyle(fontWeight: FontWeight.w800)),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.auto_awesome, color: Color(0xFF6366F1)),
+            tooltip: 'Ask Sam AI Attendance Advice',
+            onPressed: () => showSamCopilotModal(context),
+          ),
           IconButton(
             icon: const Icon(Icons.info_outline),
             tooltip: 'Attendance Policy (75% Rule)',

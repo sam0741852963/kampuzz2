@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../constants/app_colors.dart';
 import 'campus_pulse_logo.dart';
 import 'auth_user_menu.dart';
+import '../../features/sam_ai/presentation/sam_copilot_modal.dart';
 
 /// Responsive scaffold providing:
 /// - Desktop/Laptop adaptive NavigationRail sidebar on wide screens (>= 800px)
@@ -98,6 +99,12 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
+                          tooltip: 'Sam AI Copilot',
+                          icon: const Icon(Icons.auto_awesome, color: Color(0xFF6366F1)),
+                          onPressed: () => showSamCopilotModal(context),
+                        ),
+                        const SizedBox(height: 8),
+                        IconButton(
                           tooltip: 'Connect / Find Teammates',
                           icon: const Icon(Icons.handshake_rounded, color: AppColors.secondary),
                           onPressed: () => context.push('/connect'),
@@ -183,6 +190,16 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (_isSpeedDialOpen) ...[
+            _SpeedDialAction(
+              icon: Icons.auto_awesome,
+              label: 'Sam AI Copilot',
+              color: const Color(0xFF6366F1),
+              onTap: () {
+                setState(() => _isSpeedDialOpen = false);
+                showSamCopilotModal(context);
+              },
+            ),
+            const SizedBox(height: 12),
             _SpeedDialAction(
               icon: Icons.handshake_rounded,
               label: 'Connect',

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/campus_pulse_logo.dart';
 import '../../../core/widgets/auth_user_menu.dart';
+import '../../sam_ai/presentation/sam_copilot_modal.dart';
 
 /// Section 5.4: Event Feed (Instagram-style)
 /// - Vertically swipeable full-screen feed (PageView) of upcoming events
@@ -114,6 +115,11 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
           ],
         ),
         actions: [
+          IconButton(
+            tooltip: 'Ask Sam AI Copilot',
+            icon: const Icon(Icons.auto_awesome, color: Color(0xFF6366F1)),
+            onPressed: () => showSamCopilotModal(context),
+          ),
           IconButton(
             tooltip: 'Bunk-Meter',
             icon: const Icon(Icons.calculate_outlined, color: AppColors.primary),

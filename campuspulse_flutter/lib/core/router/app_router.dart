@@ -12,6 +12,7 @@ import '../../features/bunk_meter/presentation/bunk_meter_screen.dart';
 import '../../features/timetable/presentation/timetable_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
+import '../../features/sam_ai/presentation/sam_copilot_screen.dart';
 import '../../features/auth/controllers/auth_controller.dart';
 import '../widgets/responsive_scaffold.dart';
 
@@ -42,6 +43,10 @@ final List<RouteBase> _appRoutes = [
   GoRoute(
     path: '/timetable',
     builder: (context, state) => const TimetableScreen(),
+  ),
+  GoRoute(
+    path: '/sam-copilot',
+    builder: (context, state) => const SamCopilotScreen(),
   ),
   ShellRoute(
     navigatorKey: _shellNavigatorKey,
