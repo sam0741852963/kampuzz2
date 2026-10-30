@@ -1,356 +1,244 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/auth_user_menu.dart';
+import '../controllers/study_hub_controller.dart';
+import 'upload_resource_modal.dart';
+import 'widgets/brief_resource_list_item.dart';
+import 'widgets/detailed_resource_card.dart';
 
-/// Section 5.1: Notes and Resources Hub (Hero Feature)
-class StudyHubScreen extends StatefulWidget {
+/// Kampuzz Study Hub: Document Upload, Brief Resource Listing & Full Cards Catalog
+class StudyHubScreen extends ConsumerStatefulWidget {
   const StudyHubScreen({super.key});
 
   @override
-  State<StudyHubScreen> createState() => _StudyHubScreenState();
+  ConsumerState<StudyHubScreen> createState() => _StudyHubScreenState();
 }
 
-class _StudyHubScreenState extends State<StudyHubScreen> {
-  String _selectedType = 'All';
-  String _sortBy = 'rating'; // 'rating', 'newest', 'most_used'
-  String? _selectedSubject;
-  final Set<int> _followedResources = {};
-  final Set<int> _bookmarkedResources = {};
+class _StudyHubScreenState extends ConsumerState<StudyHubScreen> {
+  final _searchController = TextEditingController();
+  bool _onlyShowBookmarked = false;
 
-  final List<String> _subjects = [
-    'All Subjects',
-    'Database Management Systems',
-    'Operating Systems',
-    'Design & Analysis of Algorithms',
-    'Computer Networks',
-  ];
-
-  final List<Map<String, dynamic>> _resources = [
-    {
-      'id': 1,
-      'title': 'DBMS Comprehensive Handwritten Notes (SQL + Normalization + B-Trees)',
-      'uploaderName': 'Sahab Raza',
-      'uploaderSgpa': 9.2,
-      'uploaderSemester': 3,
-      'subject': 'Database Management Systems',
-      'type': 'pdf',
-      'rating': 4.9,
-      'ratingCount': 34,
-      'followedCount': 128,
-      'tags': ['SQL', 'Transactions', 'Normalization', 'Exam Prep'],
-      'description': 'Master notes covering complete Unit 1-4 with past 5 years semester paper solutions. Includes transaction ACID properties and indexing.',
-    },
-    {
-      'id': 2,
-      'title': 'OS Concurrency & Virtual Memory Cheatsheet',
-      'uploaderName': 'Aarav Sharma',
-      'uploaderSgpa': 9.4,
-      'uploaderSemester': 4,
-      'subject': 'Operating Systems',
-      'type': 'pdf',
-      'rating': 4.8,
-      'ratingCount': 22,
-      'followedCount': 95,
-      'tags': ['Deadlock', 'Paging', 'Concurrency', 'Formula Sheet'],
-      'description': 'One-page summary of Semaphores, Mutexes, Deadlock avoidance (Banker\'s Algo), and Page replacement algorithms (LRU, FIFO, Optimal).',
-    },
-    {
-      'id': 3,
-      'title': 'Algorithms: Dynamic Programming & Graph Theory Lecture Companion',
-      'uploaderName': 'Priya Nair',
-      'uploaderSgpa': 9.7,
-      'uploaderSemester': 4,
-      'subject': 'Design & Analysis of Algorithms',
-      'type': 'youtube',
-      'rating': 4.95,
-      'ratingCount': 48,
-      'followedCount': 164,
-      'tags': ['Dynamic Programming', 'Graphs', 'Dijkstra', 'Floyd Warshall'],
-      'description': 'Annotated lecture notes from Prof. Naveen Garg\'s course + curated YouTube playlist for DP state visualization.',
-    },
-    {
-      'id': 4,
-      'title': 'Computer Networks OSI Model & TCP/IP Protocol Suite Mindmap',
-      'uploaderName': 'Ananya Sengupta',
-      'uploaderSgpa': 9.0,
-      'uploaderSemester': 3,
-      'subject': 'Computer Networks',
-      'type': 'website',
-      'rating': 4.75,
-      'ratingCount': 18,
-      'followedCount': 82,
-      'tags': ['OSI Model', 'TCP/IP', 'Subnetting', 'Routing'],
-      'description': 'Interactive visual mindmap with packet flow diagrams, subnetting tricks, and Wireshark capture examples.',
-    },
-  ];
-
-  IconData _getTypeIcon(String type) {
-    switch (type.toLowerCase()) {
-      case 'pdf':
-        return Icons.picture_as_pdf_rounded;
-      case 'youtube':
-        return Icons.play_circle_fill_rounded;
-      case 'website':
-        return Icons.language_rounded;
-      case 'handwritten':
-        return Icons.draw_rounded;
-      case 'book':
-      default:
-        return Icons.menu_book_rounded;
-    }
-  }
-
-  Color _getTypeColor(String type) {
-    switch (type.toLowerCase()) {
-      case 'pdf':
-        return AppColors.attendanceDanger;
-      case 'youtube':
-        return const Color(0xFFFF0000);
-      case 'website':
-        return AppColors.secondary;
-      case 'handwritten':
-        return AppColors.attendanceWarning;
-      case 'book':
-      default:
-        return AppColors.primary;
-    }
-  }
-
-  void _openDetailModal(Map<String, dynamic> res) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => DraggableScrollableSheet(
-        initialChildSize: 0.75,
-        maxChildSize: 0.95,
-        minChildSize: 0.5,
-        builder: (_, scrollController) => Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          padding: const EdgeInsets.all(20),
-          child: ListView(
-            controller: scrollController,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Icon(_getTypeIcon(res['type']), color: _getTypeColor(res['type']), size: 28),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      res['title'],
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Uploaded by ${res['uploaderName']} • SGPA ${res['uploaderSgpa']} (Sem ${res['uploaderSemester']})',
-                style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 13),
-              ),
-              const SizedBox(height: 16),
-              const Text('Description', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
-              const SizedBox(height: 6),
-              Text(res['description'], style: const TextStyle(fontSize: 14, height: 1.5)),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Opening resource document in viewer...')),
-                  );
-                },
-                icon: const Icon(Icons.open_in_new),
-                label: const Text('Open & View Resource'),
-              ),
-              const SizedBox(height: 16),
-              const Text('Discussion & Comments (2)', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
-              const SizedBox(height: 10),
-              _buildCommentItem('Priya Nair', 'These notes saved my midterm exam! The B-Tree step-by-step is so clear.'),
-              _buildCommentItem('Sahab Raza (Uploader)', 'Glad it helped! Added 2026 PYQ solutions in Appendix B.'),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCommentItem(String author, String comment) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(author, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: AppColors.primary)),
-          const SizedBox(height: 4),
-          Text(comment, style: const TextStyle(fontSize: 13)),
-        ],
-      ),
-    );
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(studyHubProvider);
+    final notifier = ref.read(studyHubProvider.notifier);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    var filtered = _resources.where((r) {
-      if (_selectedType != 'All' && r['type'].toString().toLowerCase() != _selectedType.toLowerCase()) {
-        return false;
-      }
-      if (_selectedSubject != null && _selectedSubject != 'All Subjects' && r['subject'] != _selectedSubject) {
-        return false;
-      }
-      return true;
-    }).toList();
-
-    if (_sortBy == 'rating') {
-      filtered.sort((a, b) => (b['rating'] as num).compareTo(a['rating'] as num));
-    } else if (_sortBy == 'most_used') {
-      filtered.sort((a, b) => (b['followedCount'] as int).compareTo(a['followedCount'] as int));
+    var filtered = state.filteredResources;
+    if (_onlyShowBookmarked) {
+      filtered = filtered.where((r) => state.bookmarkedIds.contains(r.id)).toList();
     }
+
+    final isBriefView = state.viewMode == StudyResourceViewMode.briefList;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Study Hub', style: TextStyle(fontWeight: FontWeight.w800)),
+        title: const Row(
+          children: [
+            Icon(Icons.menu_book_rounded, color: AppColors.primary, size: 22),
+            SizedBox(width: 8),
+            Text('Study Hub', style: TextStyle(fontWeight: FontWeight.w800)),
+          ],
+        ),
         actions: [
+          // View Mode Toggle (Brief List vs Cards)
           IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {},
+            tooltip: isBriefView ? 'Switch to Detailed Cards' : 'Switch to Brief Listing',
+            icon: Icon(
+              isBriefView ? Icons.view_agenda_rounded : Icons.format_list_bulleted_rounded,
+              color: isBriefView ? AppColors.secondary : AppColors.primary,
+            ),
+            onPressed: () => notifier.toggleViewMode(),
           ),
+
+          // Bookmark Filter Toggle
           IconButton(
-            icon: const Icon(Icons.bookmark_border),
-            tooltip: 'My Saved Notes',
-            onPressed: () {},
+            tooltip: _onlyShowBookmarked ? 'Show All Documents' : 'My Bookmarks',
+            icon: Icon(
+              _onlyShowBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+              color: _onlyShowBookmarked ? AppColors.secondary : null,
+            ),
+            onPressed: () {
+              setState(() => _onlyShowBookmarked = !_onlyShowBookmarked);
+            },
           ),
           const AuthUserAvatarButton(),
         ],
       ),
+
+      // Floating Action Button: Upload Academic Document
       floatingActionButton: FloatingActionButton.extended(
+        key: const Key('upload_document_fab'),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
-        icon: const Icon(Icons.upload_file),
-        label: const Text('Upload Resource', style: TextStyle(fontWeight: FontWeight.w700)),
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Upload Resource Form opened')),
-          );
-        },
+        elevation: 4,
+        icon: const Icon(Icons.cloud_upload_rounded),
+        label: const Text('Upload Document', style: TextStyle(fontWeight: FontWeight.w800)),
+        onPressed: () => showUploadResourceModal(context),
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Branch & Year Context Banner
+            // Search Bar
+            Container(
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkCard : Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: TextField(
+                key: const Key('study_search_input'),
+                controller: _searchController,
+                onChanged: (val) => notifier.setSearchQuery(val),
+                decoration: InputDecoration(
+                  hintText: 'Search notes, PYQs, topics (e.g. SQL, DP, Paging)...',
+                  hintStyle: const TextStyle(fontSize: 13, color: AppColors.textSecondaryLight),
+                  prefixIcon: const Icon(Icons.search_rounded, color: AppColors.primary, size: 20),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear_rounded, size: 18),
+                          onPressed: () {
+                            _searchController.clear();
+                            notifier.setSearchQuery('');
+                          },
+                        )
+                      : null,
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Branch & Year Context Banner with Upload Quick Action
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.auto_awesome, color: AppColors.primary, size: 18),
+                  const Icon(Icons.verified_rounded, color: AppColors.primary, size: 18),
                   const SizedBox(width: 8),
                   const Expanded(
                     child: Text(
-                      'Filtered for: Computer Science • Year 3 (Sem 5)',
+                      'Computer Science • Year 3 (Sem 5) Course Resources',
                       style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
                         color: AppColors.primary,
                       ),
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text('Change', style: TextStyle(fontSize: 12)),
+                  InkWell(
+                    key: const Key('banner_upload_button'),
+                    onTap: () => showUploadResourceModal(context),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.add_rounded, size: 14, color: Colors.white),
+                          SizedBox(width: 3),
+                          Text(
+                            'Upload',
+                            style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
 
-            // Type Filter Chips
+            // Type Filter Chips Row
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: ['All', 'PDF', 'YouTube', 'Website', 'Handwritten', 'Book'].map((type) {
-                  final isSelected = _selectedType == type;
+                children: ['All', 'PDF', 'Handwritten', 'PYQ', 'Formula Sheet', 'Lab Manual'].map((type) {
+                  final isSelected = state.selectedType == type;
                   return Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: FilterChip(
                       selected: isSelected,
                       label: Text(type),
-                      selectedColor: AppColors.primaryLight,
+                      selectedColor: AppColors.primary.withValues(alpha: 0.15),
                       labelStyle: TextStyle(
                         color: isSelected ? AppColors.primary : AppColors.textSecondaryLight,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                        fontSize: 13,
+                        fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
+                        fontSize: 12,
                       ),
-                      onSelected: (val) {
-                        setState(() => _selectedType = type);
-                      },
+                      onSelected: (_) => notifier.setTypeFilter(type),
                     ),
                   );
                 }).toList(),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
-            // Sorting & Subject Selection
+            // Subject Filter & Sorting Bar with View Mode Indicator
             Row(
               children: [
+                // Subject Dropdown
                 Expanded(
                   child: DropdownButtonHideUnderline(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                       decoration: BoxDecoration(
                         color: isDark ? AppColors.darkCard : Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
                       ),
                       child: DropdownButton<String>(
-                        value: _selectedSubject ?? _subjects.first,
+                        value: state.selectedSubject,
                         isExpanded: true,
                         icon: const Icon(Icons.arrow_drop_down),
-                        items: _subjects.map((sub) {
+                        items: state.availableSubjects.map((sub) {
                           return DropdownMenuItem<String>(
                             value: sub,
-                            child: Text(sub, style: const TextStyle(fontSize: 13), overflow: TextOverflow.ellipsis),
+                            child: Text(sub, style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis),
                           );
                         }).toList(),
                         onChanged: (val) {
-                          setState(() => _selectedSubject = val);
+                          if (val != null) notifier.setSubjectFilter(val);
                         },
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
+
+                // Sort Dropdown Menu
                 PopupMenuButton<String>(
-                  initialValue: _sortBy,
-                  onSelected: (val) => setState(() => _sortBy = val),
+                  initialValue: state.sortBy,
+                  onSelected: (val) => notifier.setSortBy(val),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     decoration: BoxDecoration(
                       color: isDark ? AppColors.darkCard : Colors.white,
                       borderRadius: BorderRadius.circular(10),
@@ -359,225 +247,142 @@ class _StudyHubScreenState extends State<StudyHubScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.sort, size: 16),
+                        const Icon(Icons.sort_rounded, size: 16),
                         const SizedBox(width: 4),
                         Text(
-                          _sortBy == 'rating'
+                          state.sortBy == 'rating'
                               ? 'Top Rated'
-                              : _sortBy == 'most_used'
-                                  ? 'Most Used'
+                              : state.sortBy == 'most_used'
+                                  ? 'Most Downloaded'
                                   : 'Newest',
-                          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
                   ),
                   itemBuilder: (ctx) => const [
                     PopupMenuItem(value: 'rating', child: Text('Top Rated')),
-                    PopupMenuItem(value: 'most_used', child: Text('Most Used')),
-                    PopupMenuItem(value: 'newest', child: Text('Newest')),
+                    PopupMenuItem(value: 'most_used', child: Text('Most Downloaded')),
+                    PopupMenuItem(value: 'newest', child: Text('Newest Uploads')),
                   ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
+                const SizedBox(width: 6),
 
-            // Resource Cards List
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: filtered.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 14),
-              itemBuilder: (context, index) {
-                final res = filtered[index];
-                final resId = res['id'] as int;
-                final isFollowed = _followedResources.contains(resId);
-                final followedCount = (res['followedCount'] as int) + (isFollowed ? 1 : 0);
-
-                return InkWell(
-                  onTap: () => _openDetailModal(res),
-                  borderRadius: BorderRadius.circular(16),
+                // View Mode Quick Toggle Pill
+                InkWell(
+                  key: const Key('view_mode_toggle_pill'),
+                  onTap: () => notifier.toggleViewMode(),
+                  borderRadius: BorderRadius.circular(10),
                   child: Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                     decoration: BoxDecoration(
-                      color: isDark ? AppColors.darkCard : Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+                      color: isBriefView ? AppColors.secondary.withValues(alpha: 0.12) : AppColors.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isBriefView ? AppColors.secondary.withValues(alpha: 0.3) : AppColors.primary.withValues(alpha: 0.3),
+                      ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Type Icon + Subject Header
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: _getTypeColor(res['type']).withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Icon(
-                                _getTypeIcon(res['type']),
-                                color: _getTypeColor(res['type']),
-                                size: 20,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                res['subject'],
-                                style: const TextStyle(
-                                  color: AppColors.primary,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                const Icon(Icons.star_rounded, color: AppColors.attendanceWarning, size: 18),
-                                const SizedBox(width: 2),
-                                Text(
-                                  '${res['rating']}',
-                                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
-                                ),
-                                Text(
-                                  ' (${res['ratingCount']})',
-                                  style: const TextStyle(color: AppColors.textSecondaryLight, fontSize: 11),
-                                ),
-                              ],
-                            ),
-                          ],
+                        Icon(
+                          isBriefView ? Icons.format_list_bulleted_rounded : Icons.view_agenda_rounded,
+                          size: 16,
+                          color: isBriefView ? AppColors.secondary : AppColors.primary,
                         ),
-                        const SizedBox(height: 10),
-
-                        // Title
+                        const SizedBox(width: 4),
                         Text(
-                          res['title'],
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            height: 1.3,
+                          isBriefView ? 'Brief List' : 'Cards',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: isBriefView ? AppColors.secondary : AppColors.primary,
                           ),
-                        ),
-                        const SizedBox(height: 8),
-
-                        // Uploader Info with SGPA & Self-declared badge
-                        Row(
-                          children: [
-                            Text(
-                              res['uploaderName'],
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: AppColors.attendanceSafe.withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'SGPA ${res['uploaderSgpa']} (Sem ${res['uploaderSemester']})',
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.attendanceSafe,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  const Text(
-                                    '• self-declared',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: AppColors.textSecondaryLight,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-
-                        // Follow / Used Counter and Action Button
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Used by $followedCount students',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: AppColors.textSecondaryLight,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: Icon(
-                                    _bookmarkedResources.contains(resId) ? Icons.bookmark : Icons.bookmark_border,
-                                    color: _bookmarkedResources.contains(resId) ? AppColors.secondary : AppColors.textSecondaryLight,
-                                    size: 20,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      if (_bookmarkedResources.contains(resId)) {
-                                        _bookmarkedResources.remove(resId);
-                                      } else {
-                                        _bookmarkedResources.add(resId);
-                                      }
-                                    });
-                                  },
-                                ),
-                                OutlinedButton.icon(
-                                  onPressed: () {
-                                    setState(() {
-                                      if (isFollowed) {
-                                        _followedResources.remove(resId);
-                                      } else {
-                                        _followedResources.add(resId);
-                                      }
-                                    });
-                                  },
-                                  icon: Icon(
-                                    isFollowed ? Icons.check_circle : Icons.add_circle_outline,
-                                    size: 16,
-                                    color: isFollowed ? AppColors.attendanceSafe : AppColors.primary,
-                                  ),
-                                  label: Text(
-                                    isFollowed ? 'Followed' : 'I followed this',
-                                    style: TextStyle(
-                                      color: isFollowed ? AppColors.attendanceSafe : AppColors.primary,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  style: OutlinedButton.styleFrom(
-                                    side: BorderSide(
-                                      color: isFollowed ? AppColors.attendanceSafe : AppColors.primary,
-                                    ),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
                         ),
                       ],
                     ),
                   ),
-                );
-              },
+                ),
+              ],
             ),
-            const SizedBox(height: 80),
+            const SizedBox(height: 12),
+
+            // Result Header & Count
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${filtered.length} verified ${filtered.length == 1 ? 'document' : 'documents'}'
+                  '${_onlyShowBookmarked ? ' (Saved)' : ''}',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textSecondaryLight,
+                  ),
+                ),
+                if (isBriefView)
+                  const Text(
+                    'Tap any item for full brief & viewer',
+                    style: TextStyle(fontSize: 11, color: AppColors.primary, fontStyle: FontStyle.italic),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+            // Resources List (Brief Listing vs Detailed Cards)
+            if (filtered.isEmpty)
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  child: Column(
+                    children: [
+                      Icon(Icons.folder_off_outlined, size: 52, color: Colors.grey.shade400),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'No matching resources found',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Be the first to upload documents for this course!',
+                        style: TextStyle(fontSize: 13, color: AppColors.textSecondaryLight),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: () => showUploadResourceModal(context),
+                        icon: const Icon(Icons.cloud_upload_rounded),
+                        label: const Text('Upload Document Now'),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else if (isBriefView)
+              // Compact Brief Listing View
+              ListView.separated(
+                key: const Key('brief_resources_list'),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: filtered.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                itemBuilder: (context, index) {
+                  return BriefResourceListItem(resource: filtered[index]);
+                },
+              )
+            else
+              // Detailed Cards View
+              ListView.separated(
+                key: const Key('detailed_resources_cards'),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: filtered.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 14),
+                itemBuilder: (context, index) {
+                  return DetailedResourceCard(resource: filtered[index]);
+                },
+              ),
+
+            const SizedBox(height: 90),
           ],
         ),
       ),
