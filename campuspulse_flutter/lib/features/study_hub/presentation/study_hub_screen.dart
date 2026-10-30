@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/widgets/auth_user_menu.dart';
 
 /// Section 5.1: Notes and Resources Hub (Hero Feature)
 class StudyHubScreen extends StatefulWidget {
@@ -239,6 +240,7 @@ class _StudyHubScreenState extends State<StudyHubScreen> {
             tooltip: 'My Saved Notes',
             onPressed: () {},
           ),
+          const AuthUserAvatarButton(),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/widgets/auth_user_menu.dart';
 
 /// Section 5.5: Communities (Clubs & Interest Circles)
 /// Features:
@@ -438,7 +439,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 8),
+          const AuthUserAvatarButton(),
+          const SizedBox(width: 8),
         ],
       ),
       body: SingleChildScrollView(

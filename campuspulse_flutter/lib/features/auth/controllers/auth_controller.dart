@@ -122,10 +122,53 @@ class AuthController extends StateNotifier<AuthState> {
     await Future.delayed(const Duration(milliseconds: 500));
 
     final trimmedEmail = email.trim().toLowerCase();
-    final matchedUser = kDemoUsers.firstWhere(
-      (u) => u.email.toLowerCase() == trimmedEmail,
-      orElse: () => kDemoUsers[0], // Fallback to Aarav Sharma for any test email
-    );
+    UserProfile matchedUser;
+    try {
+      matchedUser = kDemoUsers.firstWhere(
+        (u) => u.email.toLowerCase() == trimmedEmail,
+      );
+    } catch (_) {
+      final namePart = email.split('@').first.replaceAll(RegExp(r'[._\-]'), ' ');
+      final capitalized = namePart
+          .split(' ')
+          .where((s) => s.isNotEmpty)
+          .map((s) => '${s[0].toUpperCase()}${s.substring(1)}')
+          .join(' ');
+      final displayName = capitalized.isNotEmpty ? capitalized : 'Kampuzz Student';
+      final domain = email.contains('@') ? email.split('@').last.toLowerCase() : '';
+      final collegeName = domain.contains('dtu')
+          ? 'Delhi Technological University (DTU)'
+          : (domain.contains('nsut')
+              ? 'Netaji Subhas University of Technology (NSUT)'
+              : (domain.contains('bits')
+                  ? 'BITS Pilani'
+                  : 'IIT Delhi'));
+
+      matchedUser = UserProfile(
+        id: 77,
+        userInfoId: 777,
+        fullName: displayName,
+        email: email.trim(),
+        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300',
+        collegeId: 1,
+        collegeName: collegeName,
+        branchId: 1,
+        branchName: 'Computer Science & Engineering',
+        sectionId: 1,
+        sectionName: 'CSE-3A',
+        year: 3,
+        semester: 5,
+        bio: 'Kampuzz student builder & tech enthusiast at $collegeName.',
+        interests: ['Tech', 'Coding', 'Events', 'Robotics'],
+        skills: ['Flutter', 'Python', 'Algorithms', 'Docker'],
+        role: 'student',
+        sgpaJson: '{"Semester 1": 9.2, "Semester 2": 9.4, "Semester 3": 9.1}',
+        notesUploadedCount: 3,
+        averageRatingReceived: 4.85,
+        quizRank: 4,
+        createdAt: DateTime.now(),
+      );
+    }
 
     state = AuthState(
       isAuthenticated: true,

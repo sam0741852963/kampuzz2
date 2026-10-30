@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/widgets/auth_user_menu.dart';
 
 /// Section 5.7: Quiz Arena (Pokemon-Style Battles & Leaderboard Podium)
 class QuizArenaScreen extends StatefulWidget {
@@ -162,6 +163,9 @@ class _QuizArenaScreenState extends State<QuizArenaScreen> with SingleTickerProv
     return Scaffold(
       appBar: AppBar(
         title: const Text('Quiz Arena', style: TextStyle(fontWeight: FontWeight.w800)),
+        actions: const [
+          AuthUserAvatarButton(),
+        ],
         bottom: TabBar(
           controller: _tabController,
           labelColor: AppColors.primary,
