@@ -3,8 +3,9 @@ import 'package:go_router/go_router.dart';
 import '../constants/app_colors.dart';
 
 /// Responsive scaffold providing:
-/// - Centered content with maximum width constraint for web/laptop screens (e.g. max 680px for feed/mobile feel, or 1000px)
-/// - Bottom navigation bar with 5 tabs: Home, Study, Arena, Community, Profile
+/// - Desktop/Laptop adaptive NavigationRail sidebar on wide screens (>= 800px)
+/// - Centered content with maximum width constraint for ergonomic reading
+/// - Bottom navigation bar with 5 tabs on mobile screens (< 800px)
 /// - Floating expandable Speed-Dial Quick-Action button for "Connect" and "Rent"
 class ResponsiveScaffold extends StatefulWidget {
   final Widget child;
@@ -51,7 +52,130 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
   @override
   Widget build(BuildContext context) {
     final selectedIndex = _calculateSelectedIndex(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth >= 840;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    if (isDesktop) {
+      // Desktop / Laptop Web Experience
+      return Scaffold(
+        body: Row(
+          children: [
+            // Left Adaptive Sidebar / NavigationRail
+            NavigationRail(
+              selectedIndex: selectedIndex,
+              onDestinationSelected: (idx) => _onItemTapped(idx, context),
+              extended: screenWidth >= 1100,
+              minExtendedWidth: 200,
+              leading: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [AppColors.primary, AppColors.secondary],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.flash_on_rounded, color: Colors.white, size: 22),
+                    ),
+                    if (screenWidth >= 1100) ...[
+                      const SizedBox(width: 10),
+                      const Text(
+                        'CampusPulse',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              trailing: Expanded(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 24.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          tooltip: 'Connect / Find Teammates',
+                          icon: const Icon(Icons.handshake_rounded, color: AppColors.secondary),
+                          onPressed: () => context.push('/connect'),
+                        ),
+                        const SizedBox(height: 8),
+                        IconButton(
+                          tooltip: 'Campus Rental',
+                          icon: const Icon(Icons.storefront_rounded, color: AppColors.accent),
+                          onPressed: () => context.push('/rent'),
+                        ),
+                        const SizedBox(height: 8),
+                        IconButton(
+                          tooltip: 'Bunk-Meter',
+                          icon: const Icon(Icons.calculate_rounded, color: AppColors.attendanceSafe),
+                          onPressed: () => context.push('/bunk-meter'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              destinations: const [
+                NavigationRailDestination(
+                  icon: Icon(Icons.dynamic_feed_outlined),
+                  selectedIcon: Icon(Icons.dynamic_feed_rounded, color: AppColors.primary),
+                  label: Text('Home Feed'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.menu_book_outlined),
+                  selectedIcon: Icon(Icons.menu_book_rounded, color: AppColors.primary),
+                  label: Text('Study Hub'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.sports_esports_outlined),
+                  selectedIcon: Icon(Icons.sports_esports_rounded, color: AppColors.primary),
+                  label: Text('Quiz Arena'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.people_outline_rounded),
+                  selectedIcon: Icon(Icons.people_rounded, color: AppColors.primary),
+                  label: Text('Communities'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.person_outline_rounded),
+                  selectedIcon: Icon(Icons.person_rounded, color: AppColors.primary),
+                  label: Text('My Profile'),
+                ),
+              ],
+            ),
+            VerticalDivider(
+              thickness: 1,
+              width: 1,
+              color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+            ),
+            // Central Responsive Content Viewport
+            Expanded(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 780),
+                  child: widget.child,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Mobile & Tablet Portrait Experience
     return Scaffold(
       body: Center(
         child: ConstrainedBox(
@@ -155,36 +279,25 @@ class _SpeedDialAction extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.black87,
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: const [
-                BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2)),
-              ],
-            ),
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 13,
+          Material(
+            elevation: 3,
+            borderRadius: BorderRadius.circular(8),
+            color: Theme.of(context).cardColor,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              child: Text(
+                label,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
               ),
             ),
           ),
           const SizedBox(width: 8),
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-              boxShadow: const [
-                BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2)),
-              ],
-            ),
-            child: Icon(icon, color: Colors.white, size: 22),
+          FloatingActionButton.small(
+            heroTag: null,
+            backgroundColor: color,
+            foregroundColor: Colors.white,
+            onPressed: onTap,
+            child: Icon(icon, size: 20),
           ),
         ],
       ),

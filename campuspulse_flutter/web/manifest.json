@@ -1,11 +1,11 @@
 {
-    "name": "campuspulse_flutter",
-    "short_name": "campuspulse_flutter",
+    "name": "CampusPulse — Campus Life Operating System",
+    "short_name": "CampusPulse",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0F172A",
+    "theme_color": "#6366F1",
+    "description": "One app for your whole college life: verified senior notes, attendance bunk predictor, live timetable, events, teammates & quiz battles.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
