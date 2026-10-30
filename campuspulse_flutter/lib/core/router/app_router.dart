@@ -13,6 +13,7 @@ import '../../features/timetable/presentation/timetable_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/sam_ai/presentation/sam_copilot_screen.dart';
+import '../../features/chat/presentation/chat_detail_screen.dart';
 import '../../features/auth/controllers/auth_controller.dart';
 import '../widgets/responsive_scaffold.dart';
 
@@ -47,6 +48,13 @@ final List<RouteBase> _appRoutes = [
   GoRoute(
     path: '/sam-copilot',
     builder: (context, state) => const SamCopilotScreen(),
+  ),
+  GoRoute(
+    path: '/chat/:id',
+    builder: (context, state) {
+      final id = state.pathParameters['id'] ?? 'conv_sahab';
+      return ChatDetailScreen(conversationId: id);
+    },
   ),
   ShellRoute(
     navigatorKey: _shellNavigatorKey,

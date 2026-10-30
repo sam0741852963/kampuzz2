@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../profile/presentation/profile_screen.dart';
+import '../../chat/controllers/chat_controller.dart';
+import '../../chat/presentation/requests_tab.dart';
+import '../../chat/presentation/conversations_tab.dart';
 
 /// Section 5.6: Connect (Teammate & Partner Discovery)
-/// Requirement-driven candidate matchmaking flow:
-/// 1. Prompts user for their Requirement first (Purpose, Title, Skills, Team size)
-/// 2. Calculates match score and returns ranked candidate swipe posters
-/// 3. Tinder-style swipe cards with 3-message pre-acceptance rate limit connection flow
-class ConnectScreen extends StatefulWidget {
+/// Features:
+/// 1. Discover & Requirement-driven candidate matchmaking flow (Swipe cards)
+/// 2. Requests Received section with person search & Accept / Decline
+/// 3. Real-Time Chat & Active Conversations with live replies
+class ConnectScreen extends ConsumerStatefulWidget {
   const ConnectScreen({super.key});
 
   @override
-  State<ConnectScreen> createState() => _ConnectScreenState();
+  ConsumerState<ConnectScreen> createState() => _ConnectScreenState();
 }
 
-class _ConnectScreenState extends State<ConnectScreen> {
+class _ConnectScreenState extends ConsumerState<ConnectScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
   // Requirement State
   bool _hasRequirement = false;
   String _selectedPurpose = 'Hackathon';
@@ -102,7 +109,14 @@ class _ConnectScreenState extends State<ConnectScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
   void dispose() {
+    _tabController.dispose();
     _titleController.dispose();
     _descController.dispose();
     super.dispose();
@@ -192,6 +206,16 @@ class _ConnectScreenState extends State<ConnectScreen> {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
+              final initialMsg = noteController.text.trim();
+              final conv = ref.read(chatControllerProvider.notifier).addSentRequestOrConversation(
+                    peerName: candidate['fullName'] as String,
+                    peerAvatar: candidate['avatarUrl'] as String,
+                    peerCollege: candidate['college'] as String,
+                    peerBranch: '${candidate['branch']} (Year ${candidate['year']})',
+                    matchPercentage: candidate['baseMatch'] as int? ?? 90,
+                    initialMessage: initialMsg,
+                  );
+
               setState(() {
                 if (_currentIndex < _candidates.length - 1) {
                   _currentIndex++;
@@ -199,10 +223,16 @@ class _ConnectScreenState extends State<ConnectScreen> {
                   _currentIndex = 0;
                 }
               });
+
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('Connection request sent to ${candidate['fullName']}! Chat enabled.'),
                   backgroundColor: AppColors.attendanceSafe,
+                  action: SnackBarAction(
+                    label: 'Open Chat',
+                    textColor: Colors.white,
+                    onPressed: () => context.push('/chat/${conv.id}'),
+                  ),
                 ),
               );
             },
@@ -215,6 +245,9 @@ class _ConnectScreenState extends State<ConnectScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final chatState = ref.watch(chatControllerProvider);
+    final pendingCount = chatState.pendingRequestCount;
+
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
       appBar: AppBar(
@@ -227,8 +260,61 @@ class _ConnectScreenState extends State<ConnectScreen> {
               label: const Text('Edit Goal', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
         ],
+        bottom: TabBar(
+          controller: _tabController,
+          labelColor: AppColors.primary,
+          unselectedLabelColor: AppColors.textSecondaryLight,
+          indicatorColor: AppColors.primary,
+          indicatorWeight: 3,
+          tabs: [
+            const Tab(
+              icon: Icon(Icons.explore_outlined, size: 18),
+              text: 'Discover',
+            ),
+            Tab(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.move_to_inbox_outlined, size: 18),
+                  const SizedBox(width: 6),
+                  const Text('Requests'),
+                  if (pendingCount > 0) ...[
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.attendanceDanger,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        '$pendingCount',
+                        style: const TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const Tab(
+              icon: Icon(Icons.chat_bubble_outline_rounded, size: 18),
+              text: 'Chats',
+            ),
+          ],
+        ),
       ),
-      body: _hasRequirement ? _buildSwipeMatchView() : _buildRequirementFormView(),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // 1. Discover & Match
+          _hasRequirement ? _buildSwipeMatchView() : _buildRequirementFormView(),
+
+          // 2. Requests Received with Search & Accept/Decline
+          const RequestsTab(),
+
+          // 3. Real-Time Chats & Active Conversations
+          const ConversationsTab(),
+        ],
+      ),
     );
   }
 
