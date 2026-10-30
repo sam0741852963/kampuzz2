@@ -14,6 +14,7 @@ import '../../features/auth/presentation/login_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/sam_ai/presentation/sam_copilot_screen.dart';
 import '../../features/chat/presentation/chat_detail_screen.dart';
+import '../../features/camera/presentation/campus_camera_screen.dart';
 import '../../features/auth/controllers/auth_controller.dart';
 import '../widgets/responsive_scaffold.dart';
 
@@ -72,6 +73,12 @@ final List<RouteBase> _appRoutes = [
         path: '/study',
         pageBuilder: (context, state) => const NoTransitionPage(
           child: StudyHubScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/camera',
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: CampusCameraScreen(),
         ),
       ),
       GoRoute(

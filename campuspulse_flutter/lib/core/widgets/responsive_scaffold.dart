@@ -26,9 +26,10 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
     final location = GoRouterState.of(context).uri.path;
     if (location.startsWith('/home')) return 0;
     if (location.startsWith('/study')) return 1;
-    if (location.startsWith('/arena')) return 2;
-    if (location.startsWith('/community')) return 3;
-    if (location.startsWith('/profile')) return 4;
+    if (location.startsWith('/camera')) return 2;
+    if (location.startsWith('/arena')) return 3;
+    if (location.startsWith('/community')) return 4;
+    if (location.startsWith('/profile')) return 5;
     return 0;
   }
 
@@ -41,12 +42,15 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
         context.go('/study');
         break;
       case 2:
-        context.go('/arena');
+        context.go('/camera');
         break;
       case 3:
-        context.go('/community');
+        context.go('/arena');
         break;
       case 4:
+        context.go('/community');
+        break;
+      case 5:
         context.go('/profile');
         break;
     }
@@ -140,6 +144,11 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                   icon: Icon(Icons.menu_book_outlined),
                   selectedIcon: Icon(Icons.menu_book_rounded, color: AppColors.primary),
                   label: Text('Study Hub'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.camera_alt_outlined),
+                  selectedIcon: Icon(Icons.camera_alt_rounded, color: AppColors.primary),
+                  label: Text('Geo-Cam'),
                 ),
                 NavigationRailDestination(
                   icon: Icon(Icons.sports_esports_outlined),
@@ -249,6 +258,11 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
             icon: Icon(Icons.menu_book_outlined),
             selectedIcon: Icon(Icons.menu_book_rounded, color: AppColors.primary),
             label: 'Study',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.camera_alt_outlined),
+            selectedIcon: Icon(Icons.camera_alt_rounded, color: AppColors.primary),
+            label: 'Geo-Cam',
           ),
           NavigationDestination(
             icon: Icon(Icons.sports_esports_outlined),
