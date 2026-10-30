@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../auth/controllers/auth_controller.dart';
 
 /// LinkedIn-style profile screen meeting Section 4 requirements:
 /// - Header banner with profile photo, name, college, branch, year, section
@@ -7,7 +11,8 @@ import '../../../core/constants/app_colors.dart';
 /// - Contributions: notes uploaded, average rating, quiz rank
 /// - About bio, Skills chips, Interests chips
 /// - GitHub, LinkedIn links and Edit Profile
-class ProfileScreen extends StatefulWidget {
+/// - Sign Out / Switch Account integration
+class ProfileScreen extends ConsumerStatefulWidget {
   final bool isPublicView;
   final Map<String, dynamic>? customUser;
 
@@ -18,16 +23,53 @@ class ProfileScreen extends StatefulWidget {
   });
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  late Map<String, dynamic> _user;
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  Map<String, dynamic> _buildUserMap() {
+    if (widget.customUser != null) {
+      return widget.customUser!;
+    }
 
-  @override
-  void initState() {
-    super.initState();
-    _user = widget.customUser ?? {
+    final authUser = ref.watch(authControllerProvider).currentUser;
+    if (authUser != null) {
+      Map<String, dynamic> parsedSgpa = {
+        'Semester 1': 9.2,
+        'Semester 2': 9.4,
+        'Semester 3': 9.1,
+        'Semester 4': 9.5,
+      };
+      if (authUser.sgpaJson != null && authUser.sgpaJson!.isNotEmpty) {
+        try {
+          parsedSgpa = Map<String, dynamic>.from(jsonDecode(authUser.sgpaJson!));
+        } catch (_) {}
+      }
+
+      return {
+        'fullName': authUser.fullName,
+        'email': authUser.email,
+        'avatarUrl': authUser.avatarUrl ?? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300',
+        'collegeName': authUser.collegeName,
+        'branchName': authUser.branchName,
+        'sectionName': authUser.sectionName,
+        'year': authUser.year,
+        'semester': authUser.semester,
+        'bio': authUser.bio ?? 'Passionate builder & student at ${authUser.collegeName}.',
+        'interests': authUser.interests,
+        'skills': authUser.skills,
+        'githubUrl': authUser.githubUrl ?? 'https://github.com',
+        'linkedinUrl': authUser.linkedinUrl ?? 'https://linkedin.com',
+        'role': authUser.role,
+        'sgpa': parsedSgpa,
+        'notesUploaded': authUser.notesUploadedCount,
+        'averageRating': authUser.averageRatingReceived > 0 ? authUser.averageRatingReceived : 4.9,
+        'quizRank': authUser.quizRank > 0 ? authUser.quizRank : 2,
+      };
+    }
+
+    // Default fallback
+    return {
       'fullName': 'Aarav Sharma',
       'email': 'aarav.sharma@iitd.ac.in',
       'avatarUrl': 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300',
@@ -54,10 +96,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
     };
   }
 
+  void _showSignOutDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Sign Out'),
+        content: const Text('Are you sure you want to sign out of CampusPulse?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.attendanceDanger),
+            onPressed: () {
+              Navigator.pop(ctx);
+              ref.read(authControllerProvider.notifier).logout();
+              context.go('/login');
+            },
+            child: const Text('Sign Out', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = _buildUserMap();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final sgpaMap = _user['sgpa'] as Map<String, dynamic>;
+    final sgpaMap = user['sgpa'] as Map<String, dynamic>;
 
     return Scaffold(
       appBar: AppBar(
@@ -82,6 +150,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               );
             },
           ),
+          if (!widget.isPublicView)
+            IconButton(
+              icon: const Icon(Icons.logout_rounded, color: AppColors.attendanceDanger),
+              tooltip: 'Sign Out',
+              onPressed: _showSignOutDialog,
+            ),
         ],
       ),
       body: SingleChildScrollView(
@@ -115,7 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     child: CircleAvatar(
                       radius: 45,
-                      backgroundImage: NetworkImage(_user['avatarUrl']),
+                      backgroundImage: NetworkImage(user['avatarUrl']),
                     ),
                   ),
                 ),
@@ -132,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Row(
                     children: [
                       Text(
-                        _user['fullName'],
+                        user['fullName'],
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w800,
@@ -146,10 +220,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          _user['role'].toString().toUpperCase(),
+                          user['role'].toString().toUpperCase(),
                           style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
                             color: AppColors.primary,
                           ),
                         ),
@@ -158,10 +232,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${_user['branchName']} • Year ${_user['year']} (${_user['sectionName']})',
+                    '${user['branchName']} • Year ${user['year']} (${user['sectionName']})',
                     style: const TextStyle(
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -170,9 +245,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const Icon(Icons.school_outlined, size: 16, color: AppColors.textSecondaryLight),
                       const SizedBox(width: 4),
                       Text(
-                        _user['collegeName'],
+                        user['collegeName'],
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 13,
                           color: AppColors.textSecondaryLight,
                         ),
                       ),
@@ -180,26 +255,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Contributions Row (Hero Stats)
+                  // Contributions Bar (Notes uploaded, Rating, Quiz Rank)
                   Row(
                     children: [
                       _buildContributionCard(
-                        icon: Icons.upload_file_rounded,
-                        count: '${_user['notesUploaded']}',
+                        icon: Icons.menu_book_rounded,
+                        count: user['notesUploaded'].toString(),
                         label: 'Notes Uploaded',
                         color: AppColors.primary,
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 8),
                       _buildContributionCard(
                         icon: Icons.star_rounded,
-                        count: '${_user['averageRating']} ★',
+                        count: user['averageRating'].toString(),
                         label: 'Avg Rating',
-                        color: AppColors.attendanceWarning,
+                        color: AppColors.accent,
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 8),
                       _buildContributionCard(
-                        icon: Icons.military_tech_rounded,
-                        count: '#${_user['quizRank']}',
+                        icon: Icons.emoji_events_rounded,
+                        count: '#${user['quizRank']}',
                         label: 'Quiz Rank',
                         color: AppColors.secondary,
                       ),
@@ -207,67 +282,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // About Section
-                  _buildSectionHeader(Icons.info_outline, 'About'),
-                  const SizedBox(height: 6),
+                  // About / Bio
+                  _buildSectionHeader(Icons.person_outline, 'About'),
+                  const SizedBox(height: 8),
                   Text(
-                    _user['bio'],
-                    style: const TextStyle(fontSize: 14, height: 1.5),
+                    user['bio'],
+                    style: TextStyle(
+                      fontSize: 14,
+                      height: 1.5,
+                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                    ),
                   ),
                   const SizedBox(height: 20),
 
-                  // Academic (SGPA by semester)
+                  // Academic: SGPA per semester with self-declared badge
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildSectionHeader(Icons.grade_outlined, 'Academic Performance'),
-                      const Spacer(),
+                      _buildSectionHeader(Icons.auto_graph_rounded, 'Academic Performance'),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                          color: AppColors.attendanceWarning.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: AppColors.attendanceWarning.withValues(alpha: 0.5),
+                          ),
                         ),
                         child: const Text(
                           'Self-Declared',
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.primary,
+                            color: AppColors.attendanceWarning,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
                   Wrap(
                     spacing: 10,
                     runSpacing: 10,
                     children: sgpaMap.entries.map((entry) {
                       return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                         decoration: BoxDecoration(
                           color: isDark ? AppColors.darkCard : Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
-                          ),
+                          border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
                         ),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               entry.key,
                               style: const TextStyle(
                                 fontSize: 11,
                                 color: AppColors.textSecondaryLight,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
-                            const SizedBox(height: 2),
+                            const SizedBox(height: 4),
                             Text(
                               '${entry.value} SGPA',
                               style: const TextStyle(
-                                fontSize: 16,
+                                fontSize: 15,
                                 fontWeight: FontWeight.w800,
                                 color: AppColors.primary,
                               ),
@@ -279,15 +358,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Skills Section
-                  _buildSectionHeader(Icons.construction_outlined, 'Skills'),
-                  const SizedBox(height: 8),
+                  // Skills
+                  _buildSectionHeader(Icons.code_rounded, 'Skills'),
+                  const SizedBox(height: 10),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: (_user['skills'] as List<String>).map((skill) {
+                    children: (user['skills'] as List<dynamic>).map((skill) {
                       return Chip(
-                        label: Text(skill),
+                        label: Text(skill.toString()),
                         backgroundColor: AppColors.primary.withValues(alpha: 0.08),
                         labelStyle: const TextStyle(
                           color: AppColors.primary,
@@ -295,20 +374,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           fontSize: 12,
                         ),
                         side: BorderSide.none,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       );
                     }).toList(),
                   ),
                   const SizedBox(height: 20),
 
-                  // Interests Section
-                  _buildSectionHeader(Icons.favorite_outline, 'Interests'),
-                  const SizedBox(height: 8),
+                  // Interests
+                  _buildSectionHeader(Icons.interests_rounded, 'Interests & Clubs'),
+                  const SizedBox(height: 10),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: (_user['interests'] as List<String>).map((interest) {
+                    children: (user['interests'] as List<dynamic>).map((interest) {
                       return Chip(
-                        label: Text(interest),
+                        label: Text(interest.toString()),
                         backgroundColor: AppColors.secondary.withValues(alpha: 0.1),
                         labelStyle: const TextStyle(
                           color: AppColors.secondary,
@@ -316,6 +396,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           fontSize: 12,
                         ),
                         side: BorderSide.none,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       );
                     }).toList(),
                   ),
@@ -327,15 +408,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildLinkTile(
                     icon: Icons.code,
                     title: 'GitHub Profile',
-                    url: _user['githubUrl'],
+                    url: user['githubUrl'],
                   ),
                   const SizedBox(height: 8),
                   _buildLinkTile(
                     icon: Icons.business,
                     title: 'LinkedIn Profile',
-                    url: _user['linkedinUrl'],
+                    url: user['linkedinUrl'],
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
+
+                  // Sign Out / Switch Account
+                  if (!widget.isPublicView) ...[
+                    OutlinedButton.icon(
+                      onPressed: _showSignOutDialog,
+                      icon: const Icon(Icons.logout_rounded, color: AppColors.attendanceDanger),
+                      label: const Text(
+                        'Sign Out / Switch Account',
+                        style: TextStyle(
+                          color: AppColors.attendanceDanger,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: AppColors.attendanceDanger),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        minimumSize: const Size.fromHeight(48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                  ],
                 ],
               ),
             ),
