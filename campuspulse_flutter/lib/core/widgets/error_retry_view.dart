@@ -7,10 +7,10 @@ class ErrorRetryView extends StatelessWidget {
   final VoidCallback onRetry;
 
   const ErrorRetryView({
-    Key? key,
+    super.key,
     required this.errorMessage,
     required this.onRetry,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class ErrorRetryView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.attendanceDanger.withOpacity(0.1),
+                color: AppColors.attendanceDanger.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(

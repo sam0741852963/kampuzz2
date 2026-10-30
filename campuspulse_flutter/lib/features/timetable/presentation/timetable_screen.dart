@@ -3,7 +3,7 @@ import '../../../core/constants/app_colors.dart';
 
 /// Section 5.3: Timetable and Academic Calendar
 class TimetableScreen extends StatefulWidget {
-  const TimetableScreen({Key? key}) : super(key: key);
+  const TimetableScreen({super.key});
 
   @override
   State<TimetableScreen> createState() => _TimetableScreenState();
@@ -142,9 +142,9 @@ class _TimetableScreenState extends State<TimetableScreen> with SingleTickerProv
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'Thursday, Today',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
@@ -193,7 +193,7 @@ class _TimetableScreenState extends State<TimetableScreen> with SingleTickerProv
               boxShadow: isCurrent
                   ? [
                       BoxShadow(
-                        color: AppColors.primary.withOpacity(0.15),
+                        color: AppColors.primary.withValues(alpha: 0.15),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       )
@@ -238,7 +238,7 @@ class _TimetableScreenState extends State<TimetableScreen> with SingleTickerProv
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.12),
+                            color: Colors.grey.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -315,9 +315,9 @@ class _TimetableScreenState extends State<TimetableScreen> with SingleTickerProv
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.primary),
               ),
               const SizedBox(height: 8),
-              Text(
+              const Text(
                 '09:00 AM • DBMS (LHC-101)\n10:15 AM • Operating Systems (LHC-204)\n11:30 AM • DAA Lab (CS Lab 3)\n02:00 PM • Computer Networks (LHC-102)',
-                style: const TextStyle(fontSize: 13, height: 1.6),
+                style: TextStyle(fontSize: 13, height: 1.6),
               ),
             ],
           ),
@@ -373,7 +373,7 @@ class _TimetableScreenState extends State<TimetableScreen> with SingleTickerProv
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: color.withOpacity(0.12),
+                              color: color.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(

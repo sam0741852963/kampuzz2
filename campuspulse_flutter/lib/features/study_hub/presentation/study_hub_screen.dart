@@ -3,7 +3,7 @@ import '../../../core/constants/app_colors.dart';
 
 /// Section 5.1: Notes and Resources Hub (Hero Feature)
 class StudyHubScreen extends StatefulWidget {
-  const StudyHubScreen({Key? key}) : super(key: key);
+  const StudyHubScreen({super.key});
 
   @override
   State<StudyHubScreen> createState() => _StudyHubScreenState();
@@ -138,7 +138,7 @@ class _StudyHubScreenState extends State<StudyHubScreen> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.3),
+                    color: Colors.grey.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -261,7 +261,7 @@ class _StudyHubScreenState extends State<StudyHubScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.08),
+                color: AppColors.primary.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -411,7 +411,7 @@ class _StudyHubScreenState extends State<StudyHubScreen> {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: _getTypeColor(res['type']).withOpacity(0.12),
+                                color: _getTypeColor(res['type']).withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Icon(
@@ -424,7 +424,7 @@ class _StudyHubScreenState extends State<StudyHubScreen> {
                             Expanded(
                               child: Text(
                                 res['subject'],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: AppColors.primary,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
@@ -474,7 +474,7 @@ class _StudyHubScreenState extends State<StudyHubScreen> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: AppColors.attendanceSafe.withOpacity(0.12),
+                                color: AppColors.attendanceSafe.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Row(

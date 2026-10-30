@@ -4,7 +4,7 @@ import '../../../core/utils/bunk_math.dart';
 
 /// Section 5.2: Bunk-Meter (Attendance Predictor)
 class BunkMeterScreen extends StatefulWidget {
-  const BunkMeterScreen({Key? key}) : super(key: key);
+  const BunkMeterScreen({super.key});
 
   @override
   State<BunkMeterScreen> createState() => _BunkMeterScreenState();
@@ -137,8 +137,8 @@ class _BunkMeterScreenState extends State<BunkMeterScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    overallColor.withOpacity(0.9),
-                    overallColor.withOpacity(0.75),
+                    overallColor.withValues(alpha: 0.9),
+                    overallColor.withValues(alpha: 0.75),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -146,7 +146,7 @@ class _BunkMeterScreenState extends State<BunkMeterScreen> {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: overallColor.withOpacity(0.3),
+                    color: overallColor.withValues(alpha: 0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -187,7 +187,7 @@ class _BunkMeterScreenState extends State<BunkMeterScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -243,11 +243,11 @@ class _BunkMeterScreenState extends State<BunkMeterScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  const Row(
                     children: [
-                      const Icon(Icons.tune_rounded, color: AppColors.primary, size: 20),
-                      const SizedBox(width: 8),
-                      const Text(
+                      Icon(Icons.tune_rounded, color: AppColors.primary, size: 20),
+                      SizedBox(width: 8),
+                      Text(
                         'What-If Attendance Simulator',
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                       ),
@@ -341,7 +341,7 @@ class _BunkMeterScreenState extends State<BunkMeterScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
-                              color: color.withOpacity(0.12),
+                              color: color.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -360,7 +360,7 @@ class _BunkMeterScreenState extends State<BunkMeterScreen> {
                         borderRadius: BorderRadius.circular(6),
                         child: LinearProgressIndicator(
                           value: (pct / 100.0).clamp(0.0, 1.0),
-                          backgroundColor: Colors.grey.withOpacity(0.15),
+                          backgroundColor: Colors.grey.withValues(alpha: 0.15),
                           valueColor: AlwaysStoppedAnimation<Color>(color),
                           minHeight: 8,
                         ),

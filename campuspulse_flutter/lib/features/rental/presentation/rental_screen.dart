@@ -3,7 +3,7 @@ import '../../../core/constants/app_colors.dart';
 
 /// Section 5.8: Campus Rental Marketplace
 class RentalScreen extends StatefulWidget {
-  const RentalScreen({Key? key}) : super(key: key);
+  const RentalScreen({super.key});
 
   @override
   State<RentalScreen> createState() => _RentalScreenState();

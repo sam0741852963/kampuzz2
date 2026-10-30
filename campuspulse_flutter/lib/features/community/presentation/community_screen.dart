@@ -3,7 +3,7 @@ import '../../../core/constants/app_colors.dart';
 
 /// Section 5.5: Communities (Clubs & Interest Groups)
 class CommunityScreen extends StatefulWidget {
-  const CommunityScreen({Key? key}) : super(key: key);
+  const CommunityScreen({super.key});
 
   @override
   State<CommunityScreen> createState() => _CommunityScreenState();
@@ -150,7 +150,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: color.withOpacity(0.12),
+                              color: color.withValues(alpha: 0.12),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(comm['icon'] as IconData, color: color, size: 24),
@@ -203,7 +203,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.08),
+                            color: AppColors.primary.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(

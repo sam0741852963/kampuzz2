@@ -4,7 +4,7 @@ import '../../../core/constants/app_colors.dart';
 
 /// Section 5.7: Quiz Arena (Pokemon-Style Battles & Leaderboard Podium)
 class QuizArenaScreen extends StatefulWidget {
-  const QuizArenaScreen({Key? key}) : super(key: key);
+  const QuizArenaScreen({super.key});
 
   @override
   State<QuizArenaScreen> createState() => _QuizArenaScreenState();
@@ -285,7 +285,7 @@ class _QuizArenaScreenState extends State<QuizArenaScreen> with SingleTickerProv
         leading: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.12),
+            color: color.withValues(alpha: 0.12),
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: color, size: 28),
@@ -296,7 +296,7 @@ class _QuizArenaScreenState extends State<QuizArenaScreen> with SingleTickerProv
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(badge, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w800)),
@@ -337,7 +337,7 @@ class _QuizArenaScreenState extends State<QuizArenaScreen> with SingleTickerProv
             // Timer Bar
             LinearProgressIndicator(
               value: _secondsRemaining / 15.0,
-              backgroundColor: Colors.grey.withOpacity(0.2),
+              backgroundColor: Colors.grey.withValues(alpha: 0.2),
               valueColor: AlwaysStoppedAnimation<Color>(
                 _secondsRemaining < 5 ? AppColors.attendanceDanger : AppColors.primary,
               ),
@@ -379,10 +379,10 @@ class _QuizArenaScreenState extends State<QuizArenaScreen> with SingleTickerProv
 
               if (_answerSubmitted) {
                 if (isCorrectOption) {
-                  bgColor = AppColors.attendanceSafe.withOpacity(0.2);
+                  bgColor = AppColors.attendanceSafe.withValues(alpha: 0.2);
                   borderColor = AppColors.attendanceSafe;
                 } else if (isSelected) {
-                  bgColor = AppColors.attendanceDanger.withOpacity(0.2);
+                  bgColor = AppColors.attendanceDanger.withValues(alpha: 0.2);
                   borderColor = AppColors.attendanceDanger;
                 }
               }
@@ -409,7 +409,7 @@ class _QuizArenaScreenState extends State<QuizArenaScreen> with SingleTickerProv
                           height: 28,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.1),
+                            color: Colors.grey.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Text(
@@ -432,7 +432,7 @@ class _QuizArenaScreenState extends State<QuizArenaScreen> with SingleTickerProv
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.08),
+                  color: AppColors.primary.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -551,7 +551,7 @@ class _QuizArenaScreenState extends State<QuizArenaScreen> with SingleTickerProv
           padding: const EdgeInsets.symmetric(vertical: 8),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primary : Colors.grey.withOpacity(0.12),
+            color: isSelected ? AppColors.primary : Colors.grey.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(

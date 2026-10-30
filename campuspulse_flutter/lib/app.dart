@@ -5,7 +5,7 @@ import 'core/theme/app_theme.dart';
 
 /// Root application widget for CampusPulse.
 class CampusPulseApp extends ConsumerWidget {
-  const CampusPulseApp({Key? key}) : super(key: key);
+  const CampusPulseApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

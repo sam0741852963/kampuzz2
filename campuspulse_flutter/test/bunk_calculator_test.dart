@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import '../lib/core/utils/bunk_math.dart';
+import 'package:campuspulse_flutter/core/utils/bunk_math.dart';
 
 void main() {
   group('BunkMath Calculations & Formula Verification', () {

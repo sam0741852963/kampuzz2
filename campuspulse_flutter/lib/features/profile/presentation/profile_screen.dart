@@ -12,10 +12,10 @@ class ProfileScreen extends StatefulWidget {
   final Map<String, dynamic>? customUser;
 
   const ProfileScreen({
-    Key? key,
+    super.key,
     this.isPublicView = false,
     this.customUser,
-  }) : super(key: key);
+  });
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -142,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.12),
+                          color: AppColors.primary.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -224,9 +224,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+                          border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
                         ),
                         child: const Text(
                           'Self-Declared',
@@ -288,7 +288,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: (_user['skills'] as List<String>).map((skill) {
                       return Chip(
                         label: Text(skill),
-                        backgroundColor: AppColors.primary.withOpacity(0.08),
+                        backgroundColor: AppColors.primary.withValues(alpha: 0.08),
                         labelStyle: const TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w600,
@@ -309,7 +309,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: (_user['interests'] as List<String>).map((interest) {
                       return Chip(
                         label: Text(interest),
-                        backgroundColor: AppColors.secondary.withOpacity(0.1),
+                        backgroundColor: AppColors.secondary.withValues(alpha: 0.1),
                         labelStyle: const TextStyle(
                           color: AppColors.secondary,
                           fontWeight: FontWeight.w600,

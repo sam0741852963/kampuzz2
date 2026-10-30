@@ -7,11 +7,11 @@ class LoadingSkeleton extends StatefulWidget {
   final double borderRadius;
 
   const LoadingSkeleton({
-    Key? key,
+    super.key,
     required this.width,
     required this.height,
     this.borderRadius = 8.0,
-  }) : super(key: key);
+  });
 
   @override
   State<LoadingSkeleton> createState() => _LoadingSkeletonState();
@@ -49,7 +49,7 @@ class _LoadingSkeletonState extends State<LoadingSkeleton> with SingleTickerProv
           width: widget.width,
           height: widget.height,
           decoration: BoxDecoration(
-            color: baseColor.withOpacity(_animation.value),
+            color: baseColor.withValues(alpha: _animation.value),
             borderRadius: BorderRadius.circular(widget.borderRadius),
           ),
         );
@@ -60,16 +60,16 @@ class _LoadingSkeletonState extends State<LoadingSkeleton> with SingleTickerProv
 
 /// Shimmer card skeleton for study resources and feed events.
 class CardSkeleton extends StatelessWidget {
-  const CardSkeleton({Key? key}) : super(key: key);
+  const CardSkeleton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return const Card(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             LoadingSkeleton(width: double.infinity, height: 20, borderRadius: 6),
             SizedBox(height: 12),
             LoadingSkeleton(width: 180, height: 14, borderRadius: 4),

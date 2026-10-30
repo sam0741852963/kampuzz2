@@ -4,7 +4,7 @@ import '../../profile/presentation/profile_screen.dart';
 
 /// Section 5.6: Connect (Teammate & Partner Discovery with Swipe Posters)
 class ConnectScreen extends StatefulWidget {
-  const ConnectScreen({Key? key}) : super(key: key);
+  const ConnectScreen({super.key});
 
   @override
   State<ConnectScreen> createState() => _ConnectScreenState();
@@ -95,14 +95,14 @@ class _ConnectScreenState extends State<ConnectScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.08),
+                color: AppColors.primary.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Row(
+              child: const Row(
                 children: [
-                  const Icon(Icons.info_outline, size: 16, color: AppColors.primary),
-                  const SizedBox(width: 8),
-                  const Expanded(
+                  Icon(Icons.info_outline, size: 16, color: AppColors.primary),
+                  SizedBox(width: 8),
+                  Expanded(
                     child: Text(
                       'You can send up to 3 messages before request acceptance.',
                       style: TextStyle(fontSize: 12, color: AppColors.primary, fontWeight: FontWeight.w600),
@@ -178,7 +178,7 @@ class _ConnectScreenState extends State<ConnectScreen> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
+                      color: Colors.black.withValues(alpha: 0.15),
                       blurRadius: 16,
                       offset: const Offset(0, 8),
                     ),
@@ -191,9 +191,9 @@ class _ConnectScreenState extends State<ConnectScreen> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.black.withOpacity(0.1),
-                        Colors.black.withOpacity(0.5),
-                        Colors.black.withOpacity(0.95),
+                        Colors.black.withValues(alpha: 0.1),
+                        Colors.black.withValues(alpha: 0.5),
+                        Colors.black.withValues(alpha: 0.95),
                       ],
                       stops: const [0.0, 0.5, 0.9],
                     ),
@@ -250,7 +250,7 @@ class _ConnectScreenState extends State<ConnectScreen> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.85),
+                          color: Colors.white.withValues(alpha: 0.85),
                           fontSize: 13,
                           height: 1.4,
                         ),
@@ -274,8 +274,8 @@ class _ConnectScreenState extends State<ConnectScreen> {
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withOpacity(0.4),
-                              border: Border.all(color: AppColors.primary.withOpacity(0.7)),
+                              color: AppColors.primary.withValues(alpha: 0.4),
+                              border: Border.all(color: AppColors.primary.withValues(alpha: 0.7)),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Text(

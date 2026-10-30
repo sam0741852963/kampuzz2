@@ -9,7 +9,7 @@ import '../../../core/constants/app_colors.dart';
 /// - "Registration closed" after deadline
 /// - Register button, Save/Remind button, View details
 class HomeFeedScreen extends StatefulWidget {
-  const HomeFeedScreen({Key? key}) : super(key: key);
+  const HomeFeedScreen({super.key});
 
   @override
   State<HomeFeedScreen> createState() => _HomeFeedScreenState();
@@ -159,9 +159,9 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withOpacity(0.3),
-                    Colors.black.withOpacity(0.5),
-                    Colors.black.withOpacity(0.95),
+                    Colors.black.withValues(alpha: 0.3),
+                    Colors.black.withValues(alpha: 0.5),
+                    Colors.black.withValues(alpha: 0.95),
                   ],
                   stops: const [0.0, 0.4, 0.9],
                 ),
@@ -183,7 +183,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                       borderRadius: BorderRadius.circular(30),
                       boxShadow: [
                         BoxShadow(
-                          color: (isUnder24 ? AppColors.attendanceDanger : AppColors.primary).withOpacity(0.4),
+                          color: (isUnder24 ? AppColors.attendanceDanger : AppColors.primary).withValues(alpha: 0.4),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -226,7 +226,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                   Text(
                     'Organized by ${event['club']}',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.85),
+                      color: Colors.white.withValues(alpha: 0.85),
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -263,7 +263,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                       fontSize: 13,
                       height: 1.4,
                     ),
@@ -277,7 +277,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                       return Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -334,7 +334,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                       const SizedBox(width: 10),
                       IconButton(
                         style: IconButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0.2),
+                          backgroundColor: Colors.white.withValues(alpha: 0.2),
                           padding: const EdgeInsets.all(12),
                         ),
                         icon: Icon(

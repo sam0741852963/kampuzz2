@@ -5,7 +5,7 @@ import '../../../core/constants/app_colors.dart';
 /// Phase 1: Under 60-second Onboarding Flow
 /// Collects: College, Branch, Year, Section, Semester, Interests, Skills, Bio, SGPA
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({Key? key}) : super(key: key);
+  const OnboardingScreen({super.key});
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -54,7 +54,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           children: [
             LinearProgressIndicator(
               value: (_step + 1) / 3.0,
-              backgroundColor: Colors.grey.withOpacity(0.15),
+              backgroundColor: Colors.grey.withValues(alpha: 0.15),
               valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
             ),
             const SizedBox(height: 24),
@@ -66,7 +66,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               const SizedBox(height: 24),
 
               DropdownButtonFormField<String>(
-                value: _selectedCollege,
+                initialValue: _selectedCollege,
                 decoration: const InputDecoration(labelText: 'College / University'),
                 items: [
                   'Indian Institute of Technology Delhi (IITD)',
@@ -78,7 +78,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               const SizedBox(height: 16),
 
               DropdownButtonFormField<String>(
-                value: _selectedBranch,
+                initialValue: _selectedBranch,
                 decoration: const InputDecoration(labelText: 'Branch / Major'),
                 items: [
                   'Computer Science & Engineering',
@@ -93,7 +93,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 children: [
                   Expanded(
                     child: DropdownButtonFormField<int>(
-                      value: _selectedYear,
+                      initialValue: _selectedYear,
                       decoration: const InputDecoration(labelText: 'Year'),
                       items: [1, 2, 3, 4].map((y) => DropdownMenuItem(value: y, child: Text('Year $y'))).toList(),
                       onChanged: (val) => setState(() => _selectedYear = val!),
@@ -102,7 +102,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   const SizedBox(width: 14),
                   Expanded(
                     child: DropdownButtonFormField<String>(
-                      value: _selectedSection,
+                      initialValue: _selectedSection,
                       decoration: const InputDecoration(labelText: 'Section'),
                       items: ['CSE-3A', 'CSE-3B', 'ECE-2A'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
                       onChanged: (val) => setState(() => _selectedSection = val!),

@@ -9,7 +9,7 @@ import '../constants/app_colors.dart';
 class ResponsiveScaffold extends StatefulWidget {
   final Widget child;
 
-  const ResponsiveScaffold({Key? key, required this.child}) : super(key: key);
+  const ResponsiveScaffold({super.key, required this.child});
 
   @override
   State<ResponsiveScaffold> createState() => _ResponsiveScaffoldState();
@@ -142,12 +142,11 @@ class _SpeedDialAction extends StatelessWidget {
   final VoidCallback onTap;
 
   const _SpeedDialAction({
-    Key? key,
     required this.icon,
     required this.label,
     required this.color,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
