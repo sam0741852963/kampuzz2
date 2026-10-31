@@ -5,7 +5,7 @@
 ---
 
 ## **LINK**
-[kampuzz1.serverpod.space](kampuzz1.serverpod.space)
+[kampuzz1.serverpod.space](https://kampuzz1.serverpod.space)
 
 ## 📌 1. Problem & Solution
 
