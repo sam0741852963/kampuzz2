@@ -36,3 +36,4 @@ migrate_working_dir/
 config/passwords.yaml
 .serverpod/
 **/pgdata/
+/campuspulse_server/web/
