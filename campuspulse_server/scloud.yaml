@@ -8,7 +8,8 @@
 # For full documentation, visit: https://docs.serverpod.dev/cloud
 
 project:
-  projectId: "campulse"
+  projectId: "kampuzz1"
   scripts:
-    pre_deploy: []
+    pre_deploy:
+      - "dart tool/build_flutter_web.dart https://kampuzz1.api.serverpod.space/"
     post_deploy: []
