@@ -34,6 +34,7 @@ migrate_working_dir/
 *.db
 *.sqlite
 config/passwords.yaml
+/campuspulse_server/config/passwords.yaml
 .serverpod/
 **/pgdata/
 /campuspulse_server/web/
