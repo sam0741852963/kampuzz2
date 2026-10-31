@@ -6,7 +6,10 @@ import 'package:campuspulse_client/campuspulse_client.dart';
 /// or connects to Serverpod Cloud in production.
 final clientProvider = Provider<Client>((ref) {
   final client = Client(
-    'http://localhost:8080/',
+    const String.fromEnvironment(
+      'SERVERPOD_API_URL',
+      defaultValue: 'http://localhost:8080/',
+    ),
   );
   return client;
 });
